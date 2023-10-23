@@ -1,7 +1,17 @@
 import User from "../models/User.js";
 import isEmailExist from "../library/EmailExist.js";
 import bcrypt from "bcrypt";
+import jsonWebToken from "jsonwebtoken";
+import dotenv from "dotenv";
 
+const env = dotenv.config().parsed;
+
+const generateAccessToken = async (payload) => {
+  return jsonWebToken.sign(payload, env.JWT_ACCESS_TOKEN_SECRET, { expiresIn: env.JWT_ACCESS_TOKEN_LIFE });
+};
+const generateRefreshToken = async (payload) => {
+  return jsonWebToken.sign(payload, env.JWT_REFRESH_TOKEN_SECRET, { expiresIn: env.JWT_REFRESH_TOKEN_LIFE });
+};
 class AuthHandler {
   async register(req, res) {
     try {
@@ -33,6 +43,7 @@ class AuthHandler {
       if (!user) {
         throw { code: 500, message: "USER_REGISTER_FAILED" };
       }
+
       return res.status(200).json({
         status: true,
         message: "USER_REGISTER_SUCCESS",
@@ -41,6 +52,38 @@ class AuthHandler {
     } catch (error) {
       console.log(error);
       return res.status(error.code || 500).json({ status: false, message: error.message });
+    }
+  }
+  async login(req, res) {
+    try {
+      if (!req.body.email) {
+        throw { code: 428, message: "EMAIL_IS_REQUIRED" };
+      }
+      if (!req.body.password) {
+        throw { code: 428, message: "PASSWORD_IS_REQUIRED" };
+      }
+      const user = await User.findOne({ email: req.body.email });
+      if (!user) {
+        throw { code: 404, message: "USER_NOT_FOUND" };
+      }
+      const isPasswordValid = await bcrypt.compareSync(req.body.password, user.password);
+      if (!isPasswordValid) {
+        throw { code: 403, message: "INVALID_PASSWORD" };
+      }
+      const accessToken = await generateAccessToken({ id: user._id });
+      const refreshToken = await generateRefreshToken({ id: user._id });
+      return res.status(200).json({
+        status: true,
+        message: "LOGIN_SUCCESS",
+        fullname: user.fullname,
+        accessToken,
+        refreshToken,
+      });
+    } catch (error) {
+      return res.status(error.code || 500).json({
+        status: false,
+        message: error.message,
+      });
     }
   }
 }
