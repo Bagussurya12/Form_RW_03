@@ -13,6 +13,7 @@ const generateRefreshToken = async (payload) => {
   return jsonWebToken.sign(payload, env.JWT_REFRESH_TOKEN_SECRET, { expiresIn: env.JWT_REFRESH_TOKEN_LIFE });
 };
 class AuthHandler {
+  // Register Handler
   async register(req, res) {
     try {
       if (!req.body.fullname) {
@@ -54,6 +55,7 @@ class AuthHandler {
       return res.status(error.code || 500).json({ status: false, message: error.message });
     }
   }
+  // Login Handler
   async login(req, res) {
     try {
       if (!req.body.email) {
@@ -70,8 +72,9 @@ class AuthHandler {
       if (!isPasswordValid) {
         throw { code: 403, message: "INVALID_PASSWORD" };
       }
-      const accessToken = await generateAccessToken({ id: user._id });
-      const refreshToken = await generateRefreshToken({ id: user._id });
+      let payload = { id: user._id };
+      const accessToken = await generateAccessToken(payload);
+      const refreshToken = await generateRefreshToken(payload);
       return res.status(200).json({
         status: true,
         message: "LOGIN_SUCCESS",
@@ -80,6 +83,36 @@ class AuthHandler {
         refreshToken,
       });
     } catch (error) {
+      return res.status(error.code || 500).json({
+        status: false,
+        message: error.message,
+      });
+    }
+  }
+  // Refresh Token
+  async refreshToken(req, res) {
+    try {
+      if (!req.body.refreshToken) {
+        throw { code: 400, message: "REFRESH_TOKEN_IS_REQUIRED" };
+      }
+      const verify = await jsonWebToken.verify(req.body.refreshToken, env.JWT_REFRESH_TOKEN_SECRET);
+
+      let payload = { id: verify.id };
+      const accessToken = await generateAccessToken(payload);
+      const refreshToken = await generateRefreshToken(payload);
+
+      return res.status(200).json({
+        status: true,
+        message: "REFRESH_TOKEN_SUCCESS",
+        accessToken,
+        refreshToken,
+      });
+    } catch (error) {
+      if (error.message == "jwt expired") {
+        error.message = "REFRESH_TOKEN_EXPIRED";
+      } else if (error.message == "invalid signature" || error.message == "jwt malformed" || error.message == "jwt must be provided" || error.message == "invalid token") {
+        error.message = "INVALID_REFRESH_TOKEN";
+      }
       return res.status(error.code || 500).json({
         status: false,
         message: error.message,
