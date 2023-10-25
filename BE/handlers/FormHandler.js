@@ -98,7 +98,7 @@ class FormHandler {
   }
   async GetAllFormHandlerByUser(req, res) {
     try {
-      const forms = await Form.find({ userId: req.jwt.id });
+      const forms = await Form.paginate({ userId: req.jwt.id }, { limit: 2, page: 2 });
       if (!forms) {
         throw { code: 404, message: "FORMS_NOT_FOUND" };
       }
