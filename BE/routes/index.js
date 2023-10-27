@@ -18,6 +18,7 @@ router.get("/form/:id", jwtAuth(), FormHandler.GetFormHandler);
 router.put("/form/:id", jwtAuth(), FormHandler.UpdateFormHandler);
 router.delete("/form/:id", jwtAuth(), FormHandler.DeleteFormHandler);
 router.get("/forms", jwtAuth(), FormHandler.GetAllFormHandlerByUser);
+router.get("/form/:id/users", jwtAuth(), FormHandler.GetFormHandlerToUser);
 
 // Questions Routes
 router.post("/form/:id/questions", jwtAuth(), QuestionsHandlers.postQuestionHandler);
@@ -28,5 +29,6 @@ router.get("/form/:id/questions", jwtAuth(), QuestionsHandlers.getQuestionHandle
 // Option Routes
 router.post("/form/:id/questions/:questionId/options", jwtAuth(), OptionsHandlers.postOptionsHandler);
 router.put("/form/:id/questions/:questionId/options/:optionId", jwtAuth(), OptionsHandlers.updateOptionsHandler);
+router.delete("/form/:id/questions/:questionId/options/:optionId", jwtAuth(), OptionsHandlers.deleteOptionHandler);
 
 export default router;

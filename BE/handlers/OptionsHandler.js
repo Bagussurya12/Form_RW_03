@@ -69,7 +69,7 @@ class OptionsHandlers {
 
       const question = await Form.findOneAndUpdate(
         { _id: req.params.id, userId: req.jwt.id },
-        { $set: { "questions.$[indexQuestion].options.$[indexOption].value": req.body.option } },
+        { $set: { "questions.$[indexQuestion].options.$[indexOption].value": req.body.options } },
         {
           arrayFilters: [{ "indexQuestion.id": new mongoose.Types.ObjectId(req.params.questionId) }, { "indexOption.id": new mongoose.Types.ObjectId(req.params.optionId) }],
           new: true,
@@ -85,6 +85,50 @@ class OptionsHandlers {
           id: req.params.optionId,
           value: req.body.option,
         },
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(error.code || 500).json({
+        status: false,
+        message: error.message,
+      });
+    }
+  }
+  async deleteOptionHandler(req, res) {
+    try {
+      if (!req.params.id) {
+        throw { code: 400, message: "REQUIRED_FORM_ID" };
+      }
+      if (!req.params.questionId) {
+        throw { code: 400, message: "REQUIRED_QUESTION_ID" };
+      }
+      if (!req.params.optionId) {
+        throw { code: 400, message: "REQUIRED_OPTION_ID" };
+      }
+      if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+        throw { code: 400, message: "INVALID_ID" };
+      }
+      if (!mongoose.Types.ObjectId.isValid(req.params.questionId)) {
+        throw { code: 400, message: "INVALID_QUESTION_ID" };
+      }
+      if (!mongoose.Types.ObjectId.isValid(req.params.optionId)) {
+        throw { code: 400, message: "INVALID_OPTION_ID" };
+      }
+      const question = await Form.findOneAndUpdate(
+        { _id: req.params.id, userId: req.jwt.id },
+        { $set: { "questions.$[indexQuestion].options.$[indexOption].value": req.body.options } },
+        {
+          arrayFilters: [{ "indexQuestion.id": new mongoose.Types.ObjectId(req.params.questionId) }, { "indexOption.id": new mongoose.Types.ObjectId(req.params.optionId) }],
+          new: true,
+        }
+      );
+      if (!question) {
+        throw { code: 500, message: "DELETE_OPTIONS_FAILED" };
+      }
+      res.status(200).json({
+        status: true,
+        message: "DELETE_OPTION_SUCCESS",
+        question,
       });
     } catch (error) {
       console.log(error);
