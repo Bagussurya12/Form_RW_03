@@ -24,7 +24,7 @@ class QuestionsHandler {
         throw { code: 400, message: "QUESTION_ADD_FAILED" };
       }
       return res.status(200).json({
-        status: false,
+        status: true,
         message: "SUCCESS_CREATE_QUESTIONS",
         question: newQuestion,
       });

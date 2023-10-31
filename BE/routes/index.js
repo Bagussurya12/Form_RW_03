@@ -4,6 +4,7 @@ import jwtAuth from "../middlewares/JwtAuth.js";
 import FormHandler from "../handlers/FormHandler.js";
 import QuestionsHandlers from "../handlers/QuestionsHandlers.js";
 import OptionsHandlers from "../handlers/OptionsHandler.js";
+import AnswerHandler from "../handlers/AnswerHandler.js";
 
 const router = express.Router();
 
@@ -31,4 +32,6 @@ router.post("/form/:id/questions/:questionId/options", jwtAuth(), OptionsHandler
 router.put("/form/:id/questions/:questionId/options/:optionId", jwtAuth(), OptionsHandlers.updateOptionsHandler);
 router.delete("/form/:id/questions/:questionId/options/:optionId", jwtAuth(), OptionsHandlers.deleteOptionHandler);
 
+// ANSWER ROUTES
+router.post("/answers/:formId", jwtAuth(), AnswerHandler.postAnswerHandler);
 export default router;
