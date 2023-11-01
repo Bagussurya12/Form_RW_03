@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import Form from "../models/Form.js";
 
-const allowType = ["Text", "Radio", "Checkbox", "Dropdown", "Email", "Password"];
+const allowType = ["Text", "Radio", "Checkbox", "Dropdown", "Email"];
 class QuestionsHandler {
   async postQuestionHandler(req, res) {
     try {
@@ -13,7 +13,7 @@ class QuestionsHandler {
       }
       const newQuestion = {
         id: new mongoose.Types.ObjectId(),
-        questions: null,
+        question: null,
         type: "Text",
         required: false,
         options: [],
@@ -39,15 +39,12 @@ class QuestionsHandler {
   async updateQuestionHandler(req, res) {
     try {
       if (!req.params.id) {
-        throw { code: 400, message: "REQUIRED_FORM_ID" };
+        throw { code: 428, message: "REQUIRED_FORM_ID" };
       }
       if (!req.params.questionId) {
-        throw { code: 400, message: "REQUIRED_QUESTION_ID" };
+        throw { code: 428, message: "REQUIRED_QUESTION_ID" };
       }
       if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-        throw { code: 400, message: "INVALID_ID" };
-      }
-      if (!mongoose.Types.ObjectId.isValid(req.params.questionId)) {
         throw { code: 400, message: "INVALID_ID" };
       }
       let field = {};
@@ -57,7 +54,7 @@ class QuestionsHandler {
         field["questions.$[indexQuestion].required"] = req.body.required;
       } else if (req.body.hasOwnProperty("type")) {
         if (!allowType.includes(req.body.type)) {
-          throw { code: 400, message: "INVALID_QUESTION_TYPE" };
+          throw { code: 400, message: "INVALID_TYPE" };
         }
         field["questions.$[indexQuestion].type"] = req.body.type;
       }
@@ -72,7 +69,7 @@ class QuestionsHandler {
       return res.status(200).json({
         status: true,
         message: "QUESTIONS_UPDATE_SUCCESS",
-        question: question.questions,
+        question,
       });
     } catch (error) {
       console.log(error);
@@ -107,6 +104,7 @@ class QuestionsHandler {
         form,
       });
     } catch (error) {
+      console.log(error);
       return res.status(error.code || 500).json({
         status: false,
         message: error.message,

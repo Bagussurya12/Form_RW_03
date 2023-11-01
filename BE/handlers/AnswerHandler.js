@@ -4,6 +4,8 @@ import Answer from "../models/Answer.js";
 import answerDuplicate from "../library/AnswerDuplicate.js";
 import questionRequireButEmpty from "../library/QuestionRequiredButEmpty.js";
 import optionValueNotExist from "../library/OptionValueNotExist.js";
+import questionIdNotValid from "../library/QuestionIdNotValid.js";
+import emailNotValid from "../library/EmailNotValid.js";
 
 class AnswerHandler {
   async postAnswerHandler(req, res) {
@@ -16,6 +18,7 @@ class AnswerHandler {
       }
 
       const form = await Form.findById(req.params.formId);
+
       // pengecekan bila jawaban / Answer terduplikat (Library AnswerDuplicate.js)
       const isDuplicate = await answerDuplicate(req.body.answers);
       if (isDuplicate) {
@@ -28,9 +31,20 @@ class AnswerHandler {
       }
       // Pengecekan Opsi
       const optionNotExist = await optionValueNotExist(form, req.body.answers);
-      if (optionNotExist) {
-        throw { code: 400, message: "OPTION_VALUE_IS_NOT_EXIST" };
+      if (optionNotExist.length > 0) {
+        throw { code: 400, message: "OPTION_VALUE_IS_NOT_EXIST", question: optionNotExist[0].question };
       }
+      // Pengecekan Question ID
+      const questionNotExist = await questionIdNotValid(form, req.body.answers);
+      if (questionNotExist.length > 0) {
+        throw { code: 400, message: "QUESTION_IS_NOT_EXIST", question: questionNotExist[0].question };
+      }
+      // Cek Valid Email
+      const emailIsNotValid = await emailNotValid(form, req.body.answers);
+      if (emailIsNotValid.length > 0) {
+        throw { code: 400, message: "EMAIL_IS_NOT_VALID", question: emailIsNotValid[0].question };
+      }
+
       let fields = {};
       req.body.answers.forEach((answer) => {
         fields[answer.questionId] = answer.value;
@@ -49,10 +63,10 @@ class AnswerHandler {
         answers,
       });
     } catch (error) {
-      console.log(error);
       return res.status(error.code || 500).json({
         status: false,
         message: error.message,
+        question: error.question || null,
       });
     }
   }
