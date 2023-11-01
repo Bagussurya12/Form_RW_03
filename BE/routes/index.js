@@ -6,6 +6,7 @@ import QuestionsHandlers from "../handlers/QuestionsHandlers.js";
 import OptionsHandlers from "../handlers/OptionsHandler.js";
 import AnswerHandler from "../handlers/AnswerHandler.js";
 import InviteHandler from "../handlers/InviteHandler.js";
+import ResponseHandler from "../handlers/ResponseHandler.js";
 
 const router = express.Router();
 
@@ -40,4 +41,7 @@ router.post("/answers/:formId", jwtAuth(), AnswerHandler.postAnswerHandler);
 router.post("/form/:id/invites", jwtAuth(), InviteHandler.postInviteHandler);
 router.delete("/form/:id/invites", jwtAuth(), InviteHandler.deleteInviteHandler);
 router.get("/form/:id/invites", jwtAuth(), InviteHandler.getInviteHandler);
+
+// RESPONSE ROUTES
+router.get("/response/:formId/lists", jwtAuth(), ResponseHandler.listDataHandler);
 export default router;
