@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import apiRouter from "./routes/index.js";
 import { connection } from "./connection.js";
+import cors from "cors";
 
 const env = dotenv.config().parsed;
 
@@ -9,6 +10,7 @@ const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cors({ origin: "http://localhost:8000" }));
 
 app.use("/", apiRouter);
 app.use((req, res) => {

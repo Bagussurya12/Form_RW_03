@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import Form from "../models/Form.js";
 import User from "../models/User.js";
+import isEmailValid from "../library/isEmailValid.js";
 
 class InviteControler {
   async postInviteHandler(req, res) {
@@ -25,8 +26,8 @@ class InviteControler {
         throw { code: 400, message: "EMAIL_ALREADY_INVITED" };
       }
       //   Check Kevalidan Email
-      if (/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(req.body.email) === false) {
-        throw { code: 400, message: "INVALID_EMAIL" };
+      if (!isEmailValid(req.body.email)) {
+        throw { code: 400, message: "EMAIL_INVALID" };
       }
       const form = await Form.findOneAndUpdate({ _id: req.params.id, userId: req.jwt.id }, { $push: { invites: req.body.email } }, { new: true });
       if (!form) {

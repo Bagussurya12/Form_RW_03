@@ -37,7 +37,7 @@ class AnswerHandler {
       // Pengecekan Question ID
       const questionNotExist = await questionIdNotValid(form, req.body.answers);
       if (questionNotExist.length > 0) {
-        throw { code: 400, message: "QUESTION_IS_NOT_EXIST", question: questionNotExist[0].question };
+        throw { code: 400, message: "QUESTION_IS_NOT_EXIST", question: questionNotExist[0].questionId };
       }
       // Cek Valid Email
       const emailIsNotValid = await emailNotValid(form, req.body.answers);

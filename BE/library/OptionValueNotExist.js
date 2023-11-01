@@ -4,7 +4,6 @@ const optionValueNotExist = async (form, answers) => {
       const answer = answers.find((answer) => answer.questionId == question.id);
       if (answer) {
         const option = question.options.find((option) => option.value == answer.value);
-        console.log(option);
         if (option === undefined) {
           return true;
         }

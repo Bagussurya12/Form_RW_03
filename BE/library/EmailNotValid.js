@@ -1,3 +1,5 @@
+import isEmailValid from "./isEmailValid.js";
+
 const emailNotValid = async (form, answers) => {
   //   const regex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
   //   /[a.z0-9]+@[a-z]+\.[a-z]{2,3}/
@@ -15,7 +17,7 @@ const emailNotValid = async (form, answers) => {
       }
 
       if (answer) {
-        if (/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(answer.value) === false) {
+        if (!isEmailValid(answer.value)) {
           return true;
         }
       }

@@ -1,7 +1,7 @@
 const questionIdNotValid = async (form, answers) => {
-  const found = form.questions.filter((question) => {
-    let answer = answers.some((answer) => question.id == answer.questionId);
-    if (answer === false) {
+  const found = answers.filter((answer) => {
+    let question = form.questions.some((question) => question.id == answer.questionId);
+    if (question === false) {
       return true;
     }
   });

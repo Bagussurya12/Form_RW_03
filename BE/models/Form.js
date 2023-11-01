@@ -39,5 +39,10 @@ const Schema = mongoose.Schema(
   }
 );
 Schema.plugin(mongoosePaginate);
+Schema.virtual("answers", {
+  ref: "Answer", //the model To USe /nama model yang di relasikan
+  localField: "_id", //_id yang ada di model Form
+  foreignField: "formId", //formId yang ada di model Answer
+});
 
 export default mongoose.model("Form", Schema);

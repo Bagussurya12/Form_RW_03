@@ -16,6 +16,7 @@ const jwtAuth = () => {
       next();
     } catch (error) {
       if (error.message == "jwt expired") {
+        error.code = 401;
         error.message = "REFRESH_TOKEN_EXPIRED";
       } else if (error.message == "invalid signature" || error.message == "jwt malformed" || error.message == "jwt must be provided" || error.message == "invalid token") {
         error.message = "INVALID_ACCESS_TOKEN";

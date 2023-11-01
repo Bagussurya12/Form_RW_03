@@ -44,4 +44,5 @@ router.get("/form/:id/invites", jwtAuth(), InviteHandler.getInviteHandler);
 
 // RESPONSE ROUTES
 router.get("/response/:formId/lists", jwtAuth(), ResponseHandler.listDataHandler);
+router.get("/response/:formId/summaries", jwtAuth(), ResponseHandler.getSummaries);
 export default router;
