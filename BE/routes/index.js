@@ -38,4 +38,6 @@ router.post("/answers/:formId", jwtAuth(), AnswerHandler.postAnswerHandler);
 
 // INVITES ROUTES
 router.post("/form/:id/invites", jwtAuth(), InviteHandler.postInviteHandler);
+router.delete("/form/:id/invites", jwtAuth(), InviteHandler.deleteInviteHandler);
+router.get("/form/:id/invites", jwtAuth(), InviteHandler.getInviteHandler);
 export default router;
