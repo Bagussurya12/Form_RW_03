@@ -2,30 +2,31 @@ import mongoose from "mongoose";
 import Form from "../models/Form.js";
 
 const allowType = ["Text", "Radio", "Checkbox", "Dropdown", "Email"];
+
 class QuestionsHandler {
   async postQuestionHandler(req, res) {
     try {
       if (!req.params.id) {
-        throw { code: 400, message: "FORM_ID_REQUIRED" };
+        throw { code: 400, message: "ID_REQUIRED" };
       }
       if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
         throw { code: 400, message: "INVALID_ID" };
       }
       const newQuestion = {
         id: new mongoose.Types.ObjectId(),
-        question: null,
         type: "Text",
-        required: false,
+        question: null,
         options: [],
+        required: false,
       };
 
-      const form = await Form.findOneAndUpdate({ _id: req.params.id, userId: req.jwt.id }, { $push: { questions: newQuestion } }, { new: true });
-      if (!form) {
-        throw { code: 400, message: "QUESTION_ADD_FAILED" };
+      const question = await Form.findOneAndUpdate({ _id: req.params.id, userId: req.jwt.id }, { $push: { questions: newQuestion } }, { new: true });
+      if (!question) {
+        throw { code: 400, message: "ADD_QUESTIONS_FAILED" };
       }
       return res.status(200).json({
         status: true,
-        message: "SUCCESS_CREATE_QUESTIONS",
+        message: "ADD_QUESTIONS_SUCCESS",
         question: newQuestion,
       });
     } catch (error) {
@@ -58,6 +59,7 @@ class QuestionsHandler {
         }
         field["questions.$[indexQuestion].type"] = req.body.type;
       }
+      // Update Form
       const question = await Form.findOneAndUpdate(
         { _id: req.params.id, userId: req.jwt.id },
         { $set: field },
@@ -94,14 +96,14 @@ class QuestionsHandler {
         throw { code: 400, message: "INVALID_ID" };
       }
 
-      const form = await Form.findOneAndUpdate({ _id: req.params.id, userId: req.jwt.id }, { $pull: { questions: { id: new mongoose.Types.ObjectId(req.params.questionId) } } }, { new: true });
-      if (!form) {
+      const question = await Form.findOneAndUpdate({ _id: req.params.id, userId: req.jwt.id }, { $pull: { questions: { id: new mongoose.Types.ObjectId(req.params.questionId) } } });
+      if (!question) {
         throw { code: 400, message: "QUESTION_DELETE_FAILED" };
       }
       return res.status(200).json({
         status: false,
         message: "SUCCESS_DELETE_QUESTIONS",
-        form,
+        question,
       });
     } catch (error) {
       console.log(error);

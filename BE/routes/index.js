@@ -13,7 +13,7 @@ const router = express.Router();
 // AUTH ROUTER
 router.post("/register", AuthHandler.register);
 router.post("/login", AuthHandler.login);
-router.post("/refreshToken", jwtAuth(), AuthHandler.refreshToken);
+router.post("/refreshToken", AuthHandler.refreshToken);
 
 // FORM ROUTER
 router.post("/form", jwtAuth(), FormHandler.AddFormHandler);
@@ -45,4 +45,5 @@ router.get("/form/:id/invites", jwtAuth(), InviteHandler.getInviteHandler);
 // RESPONSE ROUTES
 router.get("/response/:formId/lists", jwtAuth(), ResponseHandler.listDataHandler);
 router.get("/response/:formId/summaries", jwtAuth(), ResponseHandler.getSummaries);
+
 export default router;

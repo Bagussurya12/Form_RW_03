@@ -59,6 +59,7 @@ class AuthHandler {
         fullname: user.fullname,
         accessToken,
         refreshToken,
+        role: user.role,
       });
     } catch (error) {
       console.log(error);
@@ -91,8 +92,10 @@ class AuthHandler {
         fullname: user.fullname,
         accessToken,
         refreshToken,
+        role: user.role,
       });
     } catch (error) {
+      console.log(error);
       return res.status(error.code || 500).json({
         status: false,
         message: error.message,
@@ -107,7 +110,7 @@ class AuthHandler {
       }
       const verify = await jsonWebToken.verify(req.body.refreshToken, env.JWT_REFRESH_TOKEN_SECRET);
 
-      let payload = { id: verify.id };
+      let payload = { id: verify.id, role: verify.role };
       const accessToken = await generateAccessToken(payload);
       const refreshToken = await generateRefreshToken(payload);
 
@@ -118,12 +121,15 @@ class AuthHandler {
         refreshToken,
       });
     } catch (error) {
+      if (!error.code) {
+        error.code = 500;
+      }
       if (error.message == "jwt expired") {
         error.message = "REFRESH_TOKEN_EXPIRED";
       } else if (error.message == "invalid signature" || error.message == "jwt malformed" || error.message == "jwt must be provided" || error.message == "invalid token") {
         error.message = "INVALID_REFRESH_TOKEN";
       }
-      return res.status(error.code || 500).json({
+      return res.status(error.code).json({
         status: false,
         message: error.message,
       });

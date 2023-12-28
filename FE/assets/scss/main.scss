@@ -1,0 +1,18 @@
+.v-btn {
+  text-transform: none !important;
+}
+
+// CARD BORDER TOP
+.card-border-top {
+  border-top: 0.5rem solid $blue-border-color !important;
+}
+.card-border-left {
+  border-left: 0.5rem solid transparent !important;
+}
+.card-border-left.active {
+  border-color: $blue-border-color !important;
+}
+// INPUT
+.creator-input > .v-input__control > .v-input__slot:before {
+  border-color: transparent !important;
+}

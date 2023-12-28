@@ -63,6 +63,7 @@ class AnswerHandler {
         answers,
       });
     } catch (error) {
+      console.log(error);
       return res.status(error.code || 500).json({
         status: false,
         message: error.message,

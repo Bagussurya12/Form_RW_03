@@ -18,7 +18,7 @@ const Schema = mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ["Admin", "Warga"],
+      enum: ["Admin", "Warga", "RT"],
       default: "Warga",
     },
     status: {
