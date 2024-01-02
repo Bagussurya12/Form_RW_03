@@ -1,5 +1,5 @@
 import User from "../models/User.js";
-import isEmailExist from "../library/EmailExist.js";
+import { isEmailExist } from "../library/EmailExist.js";
 import bcrypt from "bcrypt";
 import jsonWebToken from "jsonwebtoken";
 import dotenv from "dotenv";

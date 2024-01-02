@@ -7,5 +7,12 @@ const isEmailExist = async (email) => {
   }
   return false;
 };
+const isEmailExistWithUserId = async (id, email) => {
+  const user = await User.findOne({ email: email, _id: { $ne: id } });
+  if (!user) {
+    return false;
+  }
+  return true;
+};
 
-export default isEmailExist;
+export { isEmailExist, isEmailExistWithUserId };

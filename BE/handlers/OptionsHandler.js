@@ -30,6 +30,7 @@ class OptionsHandlers {
       if (!question) {
         throw { code: 500, message: "ADD_OPTIONS_FAILED" };
       }
+
       return res.status(200).json({
         status: true,
         message: "ADD_OPTION_SUCCESS",
@@ -61,33 +62,28 @@ class OptionsHandlers {
         throw { code: 428, message: "INVALID_QUESTION_ID" };
       }
       if (!mongoose.Types.ObjectId.isValid(req.params.optionId)) {
-        throw { code: 400, message: "OPTION_ID_REQUIRED" };
+        throw { code: 400, message: "INVALID_OPTION_ID" };
       }
 
-      //update form
       const question = await Form.findOneAndUpdate(
-        { _id: req.params.id, userId: req.jwt.id },
-        { $set: { "questions.$[indexQuestion].options.$[indexOption].value": req.body.options } },
+        {
+          _id: req.params.id,
+          userId: req.jwt.id,
+          "questions.id": new mongoose.Types.ObjectId(req.params.questionId),
+          "questions.options.id": new mongoose.Types.ObjectId(req.params.optionId),
+        },
+        {
+          $set: {
+            "questions.$[indexQuestion].options.$[indexOption].value": req.body.options,
+          },
+        },
         {
           arrayFilters: [{ "indexQuestion.id": new mongoose.Types.ObjectId(req.params.questionId) }, { "indexOption.id": new mongoose.Types.ObjectId(req.params.optionId) }],
           new: true,
+          setDefaultsOnInsert: true,
         }
       );
-      // const question = await Form.findOneAndUpdate(
-      //   { _id: req.params.id, userId: req.jwt.id },
-      //   {
-      //     $set: {
-      //       "questions.$[indexQuestion].options.$[indexOption].value": req.body.options,
-      //     },
-      //   },
-      //   {
-      //     arrayFilters: [
-      //       { "indexQuestion.id": new mongoose.Types.ObjectId(req.params.questionId) },
-      //       { "indexOption.id": new mongoose.Types.ObjectId(req.params.optionId) },
-      //     ],
-      //     new: true,
-      //   },
-      // );
+
       if (!question) {
         throw { code: 500, message: "UPDATE_OPTIONS_FAILED" };
       }

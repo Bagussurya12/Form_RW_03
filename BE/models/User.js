@@ -18,7 +18,7 @@ const Schema = mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ["Admin", "Warga", "RT"],
+      enum: ["Admin", "Warga", "RT", "RW"],
       default: "Warga",
     },
     status: {
@@ -37,5 +37,6 @@ const Schema = mongoose.Schema(
     timestamps: { currentTime: () => Math.floor(Date.now() / 1000) },
   }
 );
+
 Schema.plugin(mongoosePaginate);
 export default mongoose.model("User", Schema);

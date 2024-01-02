@@ -24,13 +24,13 @@ class QuestionsHandler {
       if (!question) {
         throw { code: 400, message: "ADD_QUESTIONS_FAILED" };
       }
+
       return res.status(200).json({
         status: true,
         message: "ADD_QUESTIONS_SUCCESS",
         question: newQuestion,
       });
     } catch (error) {
-      console.log(error);
       return res.status(error.code || 500).json({
         status: false,
         message: error.message,

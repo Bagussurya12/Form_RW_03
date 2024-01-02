@@ -1,51 +1,65 @@
+// Form.js
 import mongoose from "mongoose";
 import mongoosePaginate from "mongoose-paginate-v2";
 
-const Schema = mongoose.Schema(
+const optionSchema = new mongoose.Schema({
+  id: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+  },
+  value: String,
+});
+
+const questionSchema = new mongoose.Schema({
+  id: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+  },
+  type: {
+    type: String,
+    enum: ["Text", "Radio", "Checkbox", "Dropdown", "Email"],
+    required: true,
+  },
+  question: String,
+  options: [optionSchema], // Menggunakan skema untuk options
+  required: Boolean,
+});
+
+const formSchema = new mongoose.Schema(
   {
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
       ref: "user",
     },
-    title: {
-      type: String,
-    },
-    description: {
-      type: String,
-    },
-    questions: {
-      type: Array,
-    },
-    invites: {
-      type: Array,
-    },
+    title: String,
+    description: String,
+    questions: [questionSchema], // Menggunakan skema untuk questions
+    invites: [String], // Misalnya, invites adalah array dari string
     public: {
-      type: Boolean, //Public : true || private : false
+      type: Boolean,
     },
     status: {
       type: String,
       enum: ["active", "inactive"],
       default: "active",
     },
-    createdAt: {
-      type: Number,
-    },
-    updatedAt: {
-      type: Number,
-    },
+    createdAt: Number,
+    updatedAt: Number,
   },
   {
     timestamps: { currentTime: () => Math.floor(Date.now() / 1000) },
   }
 );
-Schema.plugin(mongoosePaginate);
 
-Schema.virtual("answers", {
-  ref: "Answer", //the model To USe /nama model yang di relasikan
-  localField: "_id", //_id yang ada di model Form
-  foreignField: "formId", //formId yang ada di model Answer
+formSchema.plugin(mongoosePaginate);
+
+formSchema.virtual("answers", {
+  ref: "Answer",
+  localField: "_id",
+  foreignField: "formId",
 });
 
-Schema.set("toJSON", { virtuals: true });
-export default mongoose.model("Form", Schema);
+formSchema.set("toJSON", { virtuals: true });
+
+export default mongoose.model("Form", formSchema);
