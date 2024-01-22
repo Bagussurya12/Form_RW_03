@@ -13,6 +13,7 @@
     "@nuxtjs/i18n": "^7.3.1",
     "core-js": "^3.25.3",
     "fix": "^0.0.6",
+    "jwt-decode": "^4.0.0",
     "nuxt": "^2.15.8",
     "vue": "^2.7.10",
     "vue-google-charts": "^1.1.0",

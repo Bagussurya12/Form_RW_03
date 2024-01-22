@@ -1,8 +1,9 @@
 <template>
   <v-app dark>
     <v-main>
-      <AlertRight />
+      <AlertRight /> <Navigation />
       <TheHeader />
+
       <Nuxt />
     </v-main>
     <!-- <v-footer color="white" dark class="mt-5 pt-5">
@@ -21,9 +22,10 @@
 
 <script>
 import AlertRight from "~/components/AlertRight.vue";
+import Navigation from "~/components/Navigation.vue";
 
 export default {
   name: "DefaultLayout",
-  components: { AlertRight },
+  components: { AlertRight, Navigation },
 };
 </script>
